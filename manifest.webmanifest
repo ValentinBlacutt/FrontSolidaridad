@@ -1,0 +1,12 @@
+{
+  "name": "Mapa Solidario — Red Comunitaria",
+  "short_name": "Mapa Solidario",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f7faf7",
+  "theme_color": "#2e7d32",
+  "icons": [
+    { "src": "IMG/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "IMG/icono-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

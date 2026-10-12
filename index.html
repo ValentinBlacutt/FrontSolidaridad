@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2e7d32">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mapa Solidario">
+  <title>Mapa Solidario — Red Comunitaria</title>
+
+  <!-- Íconos: navegador, iOS y Android -->
+  <link rel="icon" type="image/svg+xml" href="IMG/icono.svg">
+  <link rel="apple-touch-icon" href="IMG/icono-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+
+  <!-- ===================== SIDEBAR (fija en escritorio, menú lateral en celular) ===================== -->
+  <ul id="sidebar" class="sidenav sidenav-fixed">
+    <li>
+      <div class="user-view sidebar-cabecera">
+        <i class="material-icons white-text">volunteer_activism</i>
+        <span class="white-text name">Mapa Solidario</span>
+        <span class="white-text email">Red Comunitaria</span>
+      </div>
+    </li>
+
+    <li><a href="#inicio" class="sidenav-close"><i class="material-icons">home</i>Inicio</a></li>
+    <li><a href="#destacadas" class="sidenav-close"><i class="material-icons">star</i>Destacadas</a></li>
+    <li><a href="#mapa" class="sidenav-close"><i class="material-icons">map</i>Mapa</a></li>
+    <li><a href="#instituciones" class="sidenav-close"><i class="material-icons">list</i>Instituciones</a></li>
+    <li><a href="#como-funciona" class="sidenav-close"><i class="material-icons">help_outline</i>Cómo funciona</a></li>
+    <li><a href="#video" class="sidenav-close"><i class="material-icons">play_circle_outline</i>Video</a></li>
+    <li><a href="#contacto" class="sidenav-close"><i class="material-icons">mail_outline</i>Contacto</a></li>
+    <li id="sidePanel" hidden><a href="#panel" class="sidenav-close"><i class="material-icons">dashboard</i>Mi panel</a></li>
+    <li id="sideUsuario" hidden><a class="subheader" id="sideUsuarioTxt"></a></li>
+    <li id="sideIngresar"><a href="#!" class="sidenav-close abrir-login"><i class="material-icons">login</i>Ingresar / Crear cuenta</a></li>
+    <li id="sideSalir" hidden><a href="#!" class="sidenav-close btn-salir"><i class="material-icons">logout</i>Salir</a></li>
+    <li><div class="divider"></div></li>
+
+    <li><a class="subheader">Filtrar instituciones</a></li>
+    <li class="filtros">
+      <form id="formFiltros" autocomplete="off" onsubmit="return false;">
+        <div class="input-field">
+          <input id="busqueda" type="text" maxlength="100">
+          <label for="busqueda">Nombre o barrio</label>
+        </div>
+
+        <div class="input-field">
+          <select id="filtroTipo">
+            <option value="" selected>Todos</option>
+            <option value="Comedor">Comedores</option>
+            <option value="Escuela">Escuelas</option>
+            <option value="Refugio">Refugios</option>
+            <option value="Otro">Otros</option>
+          </select>
+          <label>Tipo de institución</label>
+        </div>
+
+        <div class="input-field">
+          <select id="filtroCategoria">
+            <option value="" selected>Cualquier necesidad</option>
+            <option value="Alimentos">Alimentos</option>
+            <option value="Ropa">Ropa</option>
+            <option value="Abrigo">Abrigo</option>
+            <option value="Higiene">Higiene</option>
+            <option value="UtilesEscolares">Útiles escolares</option>
+            <option value="Otros">Otros</option>
+          </select>
+          <label>Necesita</label>
+        </div>
+
+        <div class="input-field">
+          <select id="filtroRadio">
+            <option value="1">1 km</option>
+            <option value="2">2 km</option>
+            <option value="5" selected>5 km</option>
+            <option value="10">10 km</option>
+            <option value="20">20 km</option>
+            <option value="50">50 km</option>
+          </select>
+          <label>Radio de "Cerca de mí"</label>
+        </div>
+
+        <button type="button" id="btnCerca" class="btn waves-effect waves-light green darken-2 full-width">
+          <i class="material-icons left">my_location</i>Cerca de mí
+        </button>
+        <button type="button" id="btnLimpiar" class="btn-flat waves-effect full-width">
+          Limpiar filtros
+        </button>
+      </form>
+    </li>
+
+    <li><div class="divider"></div></li>
+    <li>
+      <div class="sidebar-info">
+        <h6><i class="material-icons tiny">verified</i> ¿Qué es la Insignia Verde?</h6>
+        <p>Una institución con este sello fue auditada por un administrador: se verificaron su CUIT, su personería jurídica y fotos del lugar.</p>
+      </div>
+    </li>
+  </ul>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header>
+    <div class="navbar-fixed">
+      <nav class="green darken-2">
+        <div class="nav-wrapper">
+          <a href="#" data-target="sidebar" class="sidenav-trigger hide-on-large-only" aria-label="Abrir menú">
+            <i class="material-icons">menu</i>
+          </a>
+          <a href="#inicio" class="brand-logo">Mapa Solidario</a>
+          <ul class="right hide-on-med-and-down">
+            <li><a href="#mapa">Mapa</a></li>
+            <li><a href="#instituciones">Instituciones</a></li>
+            <li><a href="#como-funciona">Cómo funciona</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+            <li id="navPanel" hidden><a href="#panel"><i class="material-icons left">dashboard</i>Mi panel</a></li>
+            <li id="navIngresar"><a href="#!" class="abrir-login"><i class="material-icons left">login</i>Ingresar</a></li>
+            <li id="navSalir" hidden><a href="#!" class="btn-salir"><i class="material-icons left">logout</i>Salir</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== INICIO ===================== -->
+    <section id="inicio" class="hero">
+      <div class="container">
+        <h1>Conectamos vecinos con instituciones verificadas</h1>
+        <p class="flow-text">
+          Encontrá comedores, escuelas y refugios cerca tuyo, mirá qué necesitan y donales con la tranquilidad
+          de que tu ayuda llega a destino.
+        </p>
+        <a href="#mapa" class="btn-large waves-effect waves-light white green-text text-darken-2">
+          <i class="material-icons left">map</i>Explorar el mapa
+        </a>
+        <a href="#como-funciona" class="btn-large btn-flat waves-effect waves-light white-text">
+          Cómo funciona
+        </a>
+      </div>
+    </section>
+
+    <!-- ===================== CARRUSEL DE DESTACADAS ===================== -->
+    <section id="destacadas" class="seccion">
+      <div class="container wide">
+        <h2>Destacadas por la comunidad</h2>
+        <p class="grey-text text-darken-1">Las instituciones mejor valoradas según reseñas verificadas.</p>
+
+        <div class="carrusel-wrap">
+          <button type="button" id="carruselPrev" class="btn-floating waves-effect green darken-2 carrusel-btn izq" aria-label="Anterior">
+            <i class="material-icons">chevron_left</i>
+          </button>
+          <div id="carruselDestacadas" class="carousel">
+            <div class="progress"><div class="indeterminate"></div></div>
+          </div>
+          <button type="button" id="carruselNext" class="btn-floating waves-effect green darken-2 carrusel-btn der" aria-label="Siguiente">
+            <i class="material-icons">chevron_right</i>
+          </button>
+        </div>
+        <p id="destacadasEstado" class="center-align grey-text"></p>
+      </div>
+    </section>
+
+    <!-- ===================== MAPA ===================== -->
+    <section id="mapa" class="seccion">
+      <div class="container wide">
+        <h2>Mapa solidario</h2>
+        <p id="resumen" class="grey-text text-darken-1">Cargando instituciones…</p>
+        <div id="mapaLeaflet" role="application" aria-label="Mapa de instituciones verificadas"></div>
+        <p class="leyenda">
+          <span><i class="material-icons tiny" style="color:#e65100">restaurant</i> Comedor</span>
+          <span><i class="material-icons tiny" style="color:#1565c0">school</i> Escuela</span>
+          <span><i class="material-icons tiny" style="color:#6a1b9a">home</i> Refugio</span>
+          <span><i class="material-icons tiny" style="color:#00695c">volunteer_activism</i> Otro</span>
+          <span><i class="material-icons tiny green-text text-darken-2">verified</i> Verificada</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== INSTITUCIONES ===================== -->
+    <section id="instituciones" class="seccion">
+      <div class="container wide">
+        <h2>Instituciones</h2>
+        <div id="lista" class="row"></div>
+      </div>
+    </section>
+
+    <!-- ===================== MI PANEL (según el rol) ===================== -->
+    <section id="panel" class="seccion" hidden>
+      <div class="container wide">
+        <h2>Mi panel <span id="panelRol" class="chip green darken-2 white-text"></span></h2>
+
+        <!-- DONANTE -->
+        <div id="panelDonante" hidden>
+          <h4>Mis donaciones</h4>
+          <p class="grey-text text-darken-1">Para donar, elegí una institución en el mapa, tocá "Ver detalle" y después "Quiero donar".</p>
+          <div id="listaMisDonaciones"></div>
+        </div>
+
+        <!-- INSTITUCIÓN -->
+        <div id="panelInstitucion" hidden>
+          <div id="estadoInstitucion"></div>
+          <div id="gestionInstitucion" hidden>
+            <h4>Donaciones recibidas</h4>
+            <p class="grey-text text-darken-1">Cuando recibas una donación, confirmala para generar el PIN / QR. Entregáselo al donante: con ese código valida la entrega, te califica y sube una foto de evidencia.</p>
+            <div id="listaRecibidas"></div>
+
+            <h4>Mis necesidades</h4>
+            <button type="button" id="btnNuevaNecesidad" class="btn waves-effect green darken-2">
+              <i class="material-icons left">add</i>Nueva necesidad
+            </button>
+            <div id="listaNecesidades"></div>
+          </div>
+        </div>
+
+        <!-- ADMINISTRADOR -->
+        <div id="panelAdmin" hidden>
+          <h4>Auditoría de instituciones (Etapa 1)</h4>
+          <p class="grey-text text-darken-1">Revisá el CUIT, la personería jurídica y la foto de cada solicitud antes de aprobar.</p>
+          <div class="row">
+            <div class="input-field col s12 m4">
+              <select id="adminEstado">
+                <option value="Pendiente" selected>Pendientes</option>
+                <option value="Aprobada">Aprobadas</option>
+                <option value="Rechazada">Rechazadas</option>
+                <option value="">Todas</option>
+              </select>
+              <label>Estado</label>
+            </div>
+          </div>
+          <div id="listaAdmin"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CÓMO FUNCIONA (COLLAPSIBLE) ===================== -->
+    <section id="como-funciona" class="seccion">
+      <div class="container wide">
+        <h2>Cómo funciona</h2>
+        <p class="grey-text text-darken-1">Un modelo de confianza en 2 etapas para que cada donación llegue a destino.</p>
+
+        <div class="row">
+          <div class="col s12 m6">
+            <div class="card etapa-card">
+              <div class="card-content">
+                <span class="chip green darken-2 white-text">Etapa 1</span>
+                <span class="card-title">Filtro institucional</span>
+                <p>La institución sube su CUIT, su personería jurídica y una foto del lugar. Un administrador audita la documentación y, si todo está en orden, la aprueba: su pin se activa en el mapa con la <strong>Insignia Verde</strong>.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col s12 m6">
+            <div class="card etapa-card">
+              <div class="card-content">
+                <span class="chip green darken-2 white-text">Etapa 2</span>
+                <span class="card-title">Auditoría de la comunidad</span>
+                <p>Cuando la institución recibe la donación, genera un <strong>PIN / QR</strong> de confirmación. El donante lo valida, califica con estrellas y sube una foto de evidencia. Así se construye la reputación de cada institución.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ul class="collapsible popout">
+          <li class="active">
+            <div class="collapsible-header"><i class="material-icons">verified</i>¿Cómo sé que una institución es confiable?</div>
+            <div class="collapsible-body"><span>Solo aparecen en el mapa las instituciones aprobadas por un administrador, que revisó su CUIT, su personería jurídica y fotos del lugar. Además, cada institución muestra las calificaciones y fotos de evidencia de donaciones reales ya entregadas.</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">format_list_numbered</i>¿Cómo se hace una donación, paso a paso?</div>
+            <div class="collapsible-body">
+              <ol>
+                <li>Elegís una institución en el mapa y mirás qué necesita.</li>
+                <li>Registrás tu donación en la plataforma.</li>
+                <li>Entregás lo que donás a la institución.</li>
+                <li>La institución confirma la recepción y genera un PIN / QR.</li>
+                <li>Validás la entrega con el PIN, calificás con estrellas y subís una foto de evidencia.</li>
+              </ol>
+            </div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">pin</i>¿Qué es el PIN y cuánto dura?</div>
+            <div class="collapsible-body"><span>Es un código de 6 dígitos de un solo uso que genera la institución al recibir tu donación. Es válido durante 72 horas. También se puede presentar como código QR.</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">timer_off</i>¿Qué pasa si el PIN vence?</div>
+            <div class="collapsible-body"><span>La donación pasa a estado "Vencida", pero la institución puede generar un PIN nuevo para que puedas validarla.</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">add_business</i>¿Cómo sumo mi institución a la red?</div>
+            <div class="collapsible-body"><span>Registrás tu institución con su CUIT, personería jurídica y una foto del lugar. Un administrador revisa la documentación y, una vez aprobada, tu institución aparece en el mapa con la Insignia Verde y podés publicar tus necesidades.</span></div>
+          </li>
+          <li>
+            <div class="collapsible-header"><i class="material-icons">lock</i>¿Mis datos están protegidos?</div>
+            <div class="collapsible-body"><span>Las reseñas públicas muestran solo tu nombre y la inicial de tu apellido. Tu email y tu teléfono nunca se publican.</span></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== VIDEO ===================== -->
+    <section id="video" class="seccion">
+      <div class="container wide">
+        <h2>¿Cómo donar de forma segura?</h2>
+        <p class="grey-text text-darken-1">Mirá este video de menos de dos minutos con el paso a paso.</p>
+
+        <div class="video-wrap">
+          <video id="videoDonar" controls preload="metadata">
+            <source src="AUDIO-VIDEO/como-donar.mp4" type="video/mp4">
+            Tu navegador no soporta la reproducción de video.
+          </video>
+          <div id="videoAviso" class="card-panel orange lighten-4" hidden>
+            <i class="material-icons left">info</i>
+            El video todavía no está disponible. Mientras tanto, podés leer el paso a paso en la sección
+            <a href="#como-funciona">Cómo funciona</a>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACTO ===================== -->
+    <section id="contacto" class="seccion">
+      <div class="container wide">
+        <h2>Contacto</h2>
+        <p class="grey-text text-darken-1">¿Tenés una consulta, una sugerencia o querés sumar tu institución? Escribinos.</p>
+
+        <div class="row">
+          <div class="col s12 m8">
+            <div class="card">
+              <div class="card-content">
+                <form id="formContacto" novalidate autocomplete="on">
+                  <div class="row">
+                    <div class="input-field col s12 m6">
+                      <i class="material-icons prefix">person</i>
+                      <input id="nombre" name="nombre" type="text" maxlength="100" autocomplete="given-name">
+                      <label for="nombre">Nombre</label>
+                      <span class="error-msg" id="error-nombre" role="alert"></span>
+                    </div>
+                    <div class="input-field col s12 m6">
+                      <input id="apellido" name="apellido" type="text" maxlength="100" autocomplete="family-name">
+                      <label for="apellido">Apellido</label>
+                      <span class="error-msg" id="error-apellido" role="alert"></span>
+                    </div>
+
+                    <div class="input-field col s12 m6">
+                      <i class="material-icons prefix">phone</i>
+                      <input id="telefono" name="telefono" type="tel" maxlength="20" autocomplete="tel">
+                      <label for="telefono">Teléfono</label>
+                      <span class="error-msg" id="error-telefono" role="alert"></span>
+                    </div>
+                    <div class="input-field col s12 m6">
+                      <i class="material-icons prefix">email</i>
+                      <input id="email" name="email" type="email" maxlength="200" autocomplete="email">
+                      <label for="email">Correo electrónico</label>
+                      <span class="error-msg" id="error-email" role="alert"></span>
+                    </div>
+
+                    <div class="input-field col s12">
+                      <i class="material-icons prefix">chat</i>
+                      <textarea id="comentarios" name="comentarios" class="materialize-textarea" maxlength="2000"></textarea>
+                      <label for="comentarios">Comentarios</label>
+                      <span class="error-msg" id="error-comentarios" role="alert"></span>
+                      <span class="contador" id="contadorComentarios">0 / 2000</span>
+                    </div>
+                  </div>
+
+                  <button type="submit" id="btnEnviar" class="btn-large waves-effect waves-light green darken-2">
+                    <i class="material-icons right">send</i><span id="btnEnviarTxt">Enviar mensaje</span>
+                  </button>
+                </form>
+
+                <div id="contactoOk" class="card-panel green lighten-4" hidden role="status">
+                  <i class="material-icons left green-text text-darken-2">check_circle</i>
+                  ¡Gracias! Recibimos tu mensaje y te vamos a responder a la brevedad.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col s12 m4">
+            <div class="card green lighten-5">
+              <div class="card-content">
+                <span class="card-title"><i class="material-icons left">volunteer_activism</i>¿Sos una institución?</span>
+                <p>Si querés que tu comedor, escuela o refugio aparezca en el mapa, escribinos por este formulario y te guiamos en el registro.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-simple">
+    <div class="container">
+      <p>Mapa Solidario — Red Comunitaria · Trabajo Práctico Final Integrador · 7.º 4.º</p>
+    </div>
+  </footer>
+
+  <!-- ===================== MODAL: DETALLE DE INSTITUCIÓN ===================== -->
+  <div id="modalDetalle" class="modal modal-fixed-footer">
+    <div class="modal-content" id="detalleContenido"></div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect btn-flat">Cerrar</a>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: INGRESAR / CREAR CUENTA ===================== -->
+  <div id="modalAuth" class="modal">
+    <div class="modal-content">
+      <ul class="tabs tabs-fixed-width" id="tabsAuth">
+        <li class="tab"><a class="active" href="#tabLogin">Ingresar</a></li>
+        <li class="tab"><a href="#tabRegistro">Crear cuenta</a></li>
+      </ul>
+      <p id="authMensaje" class="green-text text-darken-2" hidden></p>
+
+      <div id="tabLogin">
+        <form id="formLogin" novalidate>
+          <div class="input-field">
+            <i class="material-icons prefix">email</i>
+            <input id="login-email" type="email" autocomplete="email">
+            <label for="login-email">Email</label>
+            <span class="error-msg" id="error-login-email" role="alert"></span>
+          </div>
+          <div class="input-field">
+            <i class="material-icons prefix">lock</i>
+            <input id="login-password" type="password" autocomplete="current-password">
+            <label for="login-password">Contraseña</label>
+            <span class="error-msg" id="error-login-password" role="alert"></span>
+          </div>
+          <button type="submit" id="btnLogin" class="btn waves-effect green darken-2 full-width">Ingresar</button>
+        </form>
+      </div>
+
+      <div id="tabRegistro">
+        <form id="formRegistro" novalidate>
+          <div class="row">
+            <div class="input-field col s12 m6">
+              <input id="reg-nombre" type="text" maxlength="100" autocomplete="given-name">
+              <label for="reg-nombre">Nombre</label>
+              <span class="error-msg" id="error-reg-nombre" role="alert"></span>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="reg-apellido" type="text" maxlength="100" autocomplete="family-name">
+              <label for="reg-apellido">Apellido</label>
+              <span class="error-msg" id="error-reg-apellido" role="alert"></span>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="reg-email" type="email" maxlength="200" autocomplete="email">
+              <label for="reg-email">Email</label>
+              <span class="error-msg" id="error-reg-email" role="alert"></span>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="reg-telefono" type="tel" maxlength="20" autocomplete="tel">
+              <label for="reg-telefono">Teléfono (opcional)</label>
+              <span class="error-msg" id="error-reg-telefono" role="alert"></span>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="reg-password" type="password" maxlength="100" autocomplete="new-password">
+              <label for="reg-password">Contraseña (mínimo 8 caracteres)</label>
+              <span class="error-msg" id="error-reg-password" role="alert"></span>
+            </div>
+            <div class="input-field col s12 m6">
+              <input id="reg-password2" type="password" maxlength="100" autocomplete="new-password">
+              <label for="reg-password2">Repetir contraseña</label>
+              <span class="error-msg" id="error-reg-password2" role="alert"></span>
+            </div>
+          </div>
+          <button type="submit" id="btnRegistro" class="btn waves-effect green darken-2 full-width">Crear cuenta de donante</button>
+        </form>
+        <p class="center-align">¿Sos una institución? <a href="#!" id="linkRegInstitucion">Registrá tu institución</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODAL: REGISTRAR INSTITUCIÓN ===================== -->
+  <div id="modalRegInstitucion" class="modal">
+    <form id="formRegInstitucion" novalidate>
+      <div class="modal-content">
+        <h4>Registrar mi institución</h4>
+        <p class="grey-text text-darken-1">Un administrador revisará tu documentación. Cuando la apruebe, tu institución aparecerá en el mapa con la Insignia Verde.</p>
+
+        <h6>Cuenta de acceso</h6>
+        <div class="row">
+          <div class="input-field col s12 m6">
+            <input id="inst-email" type="email" maxlength="200" autocomplete="email">
+            <label for="inst-email">Email</label>
+            <span class="error-msg" id="error-inst-email" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m6">
+            <input id="inst-password" type="password" maxlength="100" autocomplete="new-password">
+            <label for="inst-password">Contraseña (mínimo 8 caracteres)</label>
+            <span class="error-msg" id="error-inst-password" role="alert"></span>
+          </div>
+        </div>
+
+        <h6>Datos de la institución</h6>
+        <div class="row">
+          <div class="input-field col s12 m8">
+            <input id="inst-nombre" type="text" maxlength="150">
+            <label for="inst-nombre">Nombre de la institución</label>
+            <span class="error-msg" id="error-inst-nombre" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m4">
+            <select id="inst-tipo">
+              <option value="" disabled selected>Elegí un tipo</option>
+              <option value="Comedor">Comedor</option>
+              <option value="Escuela">Escuela</option>
+              <option value="Refugio">Refugio</option>
+              <option value="Otro">Otro</option>
+            </select>
+            <label>Tipo</label>
+            <span class="error-msg" id="error-inst-tipo" role="alert"></span>
+          </div>
+          <div class="input-field col s12">
+            <textarea id="inst-descripcion" class="materialize-textarea" maxlength="1000"></textarea>
+            <label for="inst-descripcion">Descripción (qué hace la institución)</label>
+            <span class="error-msg" id="error-inst-descripcion" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m6">
+            <input id="inst-cuit" type="text" maxlength="13" inputmode="numeric">
+            <label for="inst-cuit">CUIT (ej.: 30-71234567-1)</label>
+            <span class="error-msg" id="error-inst-cuit" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m6">
+            <input id="inst-telefono" type="tel" maxlength="20">
+            <label for="inst-telefono">Teléfono (opcional)</label>
+            <span class="error-msg" id="error-inst-telefono" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m8">
+            <input id="inst-direccion" type="text" maxlength="250">
+            <label for="inst-direccion">Dirección</label>
+            <span class="error-msg" id="error-inst-direccion" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m4">
+            <input id="inst-barrio" type="text" maxlength="100">
+            <label for="inst-barrio">Barrio (opcional)</label>
+          </div>
+          <div class="input-field col s12">
+            <input id="inst-emailContacto" type="email" maxlength="200">
+            <label for="inst-emailContacto">Email de contacto público (opcional)</label>
+            <span class="error-msg" id="error-inst-emailContacto" role="alert"></span>
+          </div>
+        </div>
+
+        <h6>Ubicación</h6>
+        <p class="grey-text text-darken-1">Hacé clic en el mapa para marcar dónde está tu institución.</p>
+        <div id="mapaRegistro"></div>
+        <button type="button" id="btnMiUbicacion" class="btn-small btn-flat waves-effect">
+          <i class="material-icons left">my_location</i>Usar mi ubicación actual
+        </button>
+        <span id="coordsTexto" class="grey-text">Todavía no marcaste la ubicación.</span>
+        <input type="hidden" id="inst-latitud">
+        <input type="hidden" id="inst-longitud">
+        <span class="error-msg" id="error-inst-latitud" role="alert"></span>
+
+        <h6>Documentación (máximo 5 MB por archivo)</h6>
+        <div class="file-field input-field">
+          <div class="btn green darken-2"><span>Personería</span><input type="file" id="inst-personeria" accept=".pdf,.jpg,.jpeg,.png"></div>
+          <div class="file-path-wrapper"><input class="file-path" type="text" placeholder="Personería jurídica (PDF o imagen)" readonly></div>
+        </div>
+        <span class="error-msg" id="error-inst-personeria" role="alert"></span>
+
+        <div class="file-field input-field">
+          <div class="btn green darken-2"><span>Foto</span><input type="file" id="inst-foto" accept="image/jpeg,image/png,image/webp"></div>
+          <div class="file-path-wrapper"><input class="file-path" type="text" placeholder="Foto del lugar (JPG, PNG o WEBP)" readonly></div>
+        </div>
+        <span class="error-msg" id="error-inst-foto" role="alert"></span>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat">Cancelar</a>
+        <button type="submit" id="btnRegInstitucion" class="btn green darken-2">Enviar solicitud</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===================== MODAL: REGISTRAR DONACIÓN ===================== -->
+  <div id="modalDonar" class="modal">
+    <form id="formDonar" novalidate>
+      <div class="modal-content">
+        <h4>Registrar donación</h4>
+        <p>Vas a donar a <strong id="donarInstitucion"></strong>.</p>
+        <input type="hidden" id="donar-institucionId">
+        <div class="input-field">
+          <select id="donar-necesidad">
+            <option value="" selected>Ninguna en particular</option>
+          </select>
+          <label>¿Querés cubrir una necesidad concreta?</label>
+        </div>
+        <div class="input-field">
+          <textarea id="donar-descripcion" class="materialize-textarea" maxlength="500"></textarea>
+          <label for="donar-descripcion">¿Qué vas a donar?</label>
+          <span class="error-msg" id="error-donar-descripcion" role="alert"></span>
+        </div>
+        <p class="grey-text"><small>Después de entregar tu donación, la institución confirmará la recepción y te dará un PIN para validarla.</small></p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat">Cancelar</a>
+        <button type="submit" id="btnDonar" class="btn green darken-2">Registrar donación</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===================== MODAL: VALIDAR ENTREGA (PIN + ESTRELLAS + EVIDENCIA) ===================== -->
+  <div id="modalValidar" class="modal">
+    <form id="formValidar" novalidate>
+      <div class="modal-content">
+        <h4>Validar entrega</h4>
+        <p id="validarInfo"></p>
+        <input type="hidden" id="validar-id">
+
+        <div class="input-field">
+          <i class="material-icons prefix">pin</i>
+          <input id="validar-pin" type="text" inputmode="numeric" maxlength="40" autocomplete="one-time-code">
+          <label for="validar-pin">PIN de 6 dígitos (o el contenido del QR)</label>
+          <span class="error-msg" id="error-validar-pin" role="alert"></span>
+        </div>
+
+        <p>Calificá a la institución</p>
+        <div id="validarEstrellas" class="estrellas-input" role="radiogroup" aria-label="Calificación"></div>
+        <input type="hidden" id="validar-estrellas">
+        <span class="error-msg" id="error-validar-estrellas" role="alert"></span>
+
+        <div class="input-field">
+          <textarea id="validar-comentario" class="materialize-textarea" maxlength="500"></textarea>
+          <label for="validar-comentario">Comentario (opcional)</label>
+        </div>
+
+        <div class="file-field input-field">
+          <div class="btn green darken-2"><span>Foto</span><input type="file" id="validar-foto" accept="image/jpeg,image/png,image/webp"></div>
+          <div class="file-path-wrapper"><input class="file-path" type="text" placeholder="Foto de evidencia de la entrega" readonly></div>
+        </div>
+        <span class="error-msg" id="error-validar-foto" role="alert"></span>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat">Cancelar</a>
+        <button type="submit" id="btnValidar" class="btn green darken-2">Confirmar entrega</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===================== MODAL: NECESIDAD (CREAR / EDITAR) ===================== -->
+  <div id="modalNecesidad" class="modal">
+    <form id="formNecesidad" novalidate>
+      <div class="modal-content">
+        <h4 id="tituloModalNec">Nueva necesidad</h4>
+        <input type="hidden" id="nec-id">
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="nec-titulo" type="text" maxlength="150">
+            <label for="nec-titulo">Título (ej.: Leche y cereales)</label>
+            <span class="error-msg" id="error-nec-titulo" role="alert"></span>
+          </div>
+          <div class="input-field col s12">
+            <textarea id="nec-descripcion" class="materialize-textarea" maxlength="1000"></textarea>
+            <label for="nec-descripcion">Descripción</label>
+            <span class="error-msg" id="error-nec-descripcion" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m6">
+            <select id="nec-categoria">
+              <option value="" disabled selected>Elegí una categoría</option>
+              <option value="Alimentos">Alimentos</option>
+              <option value="Ropa">Ropa</option>
+              <option value="Abrigo">Abrigo</option>
+              <option value="Higiene">Higiene</option>
+              <option value="UtilesEscolares">Útiles escolares</option>
+              <option value="Otros">Otros</option>
+            </select>
+            <label>Categoría</label>
+            <span class="error-msg" id="error-nec-categoria" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m6">
+            <select id="nec-urgencia">
+              <option value="Baja">Baja</option>
+              <option value="Media" selected>Media</option>
+              <option value="Alta">Alta (urgente)</option>
+            </select>
+            <label>Urgencia</label>
+          </div>
+          <div class="input-field col s12 m6">
+            <input id="nec-cantidad" type="text" inputmode="numeric" maxlength="6">
+            <label for="nec-cantidad">Cantidad requerida (opcional)</label>
+            <span class="error-msg" id="error-nec-cantidad" role="alert"></span>
+          </div>
+          <div class="input-field col s12 m6">
+            <input id="nec-fecha" type="date">
+            <label for="nec-fecha" class="active">Fecha límite (opcional)</label>
+            <span class="error-msg" id="error-nec-fecha" role="alert"></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat">Cancelar</a>
+        <button type="submit" id="btnNecesidad" class="btn green darken-2">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===================== MODAL: RECHAZAR INSTITUCIÓN (ADMIN) ===================== -->
+  <div id="modalRechazo" class="modal">
+    <form id="formRechazo" novalidate>
+      <div class="modal-content">
+        <h4>Rechazar solicitud</h4>
+        <p>Vas a rechazar a <strong id="rechazoNombre"></strong>. El motivo lo va a ver la institución.</p>
+        <input type="hidden" id="rechazo-id">
+        <div class="input-field">
+          <textarea id="rechazo-motivo" class="materialize-textarea" maxlength="500"></textarea>
+          <label for="rechazo-motivo">Motivo del rechazo</label>
+          <span class="error-msg" id="error-rechazo-motivo" role="alert"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close btn-flat">Cancelar</a>
+        <button type="submit" id="btnRechazo" class="btn red darken-2">Rechazar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===================== SCRIPTS (el orden importa) ===================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="JS/util.js"></script>
+  <script src="JS/formularios.js"></script>
+  <script src="JS/api.js"></script>
+  <script src="JS/mapa.js"></script>
+  <script src="JS/app.js"></script>
+  <script src="JS/secciones.js"></script>
+  <script src="JS/auth.js"></script>
+  <script src="JS/donaciones.js"></script>
+  <script src="JS/institucion.js"></script>
+  <script src="JS/admin.js"></script>
+</body>
+</html>

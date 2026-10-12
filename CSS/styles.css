@@ -1,0 +1,193 @@
+:root {
+  --verde: #2e7d32;
+  --verde-oscuro: #1b5e20;
+  --verde-claro: #e8f5e9;
+}
+
+html { scroll-behavior: smooth; }
+body { background: #f7faf7; }
+
+/* La sidebar fija ocupa 300 px en pantallas grandes */
+header, main, footer { padding-left: 300px; }
+@media only screen and (max-width: 992px) {
+  header, main, footer { padding-left: 0; }
+}
+
+section { scroll-margin-top: 72px; } /* compensa la navbar fija */
+
+/* ---------- Sidebar ---------- */
+.sidebar-cabecera {
+  background: linear-gradient(135deg, var(--verde-oscuro), #66bb6a);
+  padding: 24px 32px 16px;
+  margin-bottom: 8px;
+}
+.sidebar-cabecera i { font-size: 56px; }
+.sidebar-cabecera .name, .sidebar-cabecera .email { display: block; }
+.sidebar-cabecera .name { font-weight: 500; font-size: 18px; }
+
+.sidenav li.filtros { padding: 0 24px; line-height: normal; height: auto; }
+.full-width { width: 100%; margin-bottom: 8px; text-align: center; }
+
+.sidebar-info { padding: 8px 24px 24px; line-height: 1.4; color: #555; }
+.sidebar-info h6 { color: var(--verde); font-weight: 500; }
+.sidebar-info p { font-size: 14px; margin: 0; }
+
+/* ---------- Hero ---------- */
+.hero {
+  background: linear-gradient(135deg, var(--verde-oscuro), #66bb6a);
+  color: #fff;
+  padding: 64px 0 72px;
+}
+.hero h1 { font-size: 2.6rem; margin: 0 0 16px; line-height: 1.15; }
+.hero .btn-large { margin: 8px 8px 0 0; }
+
+/* ---------- Secciones ---------- */
+.seccion { padding: 32px 0 16px; }
+.seccion h2 { font-size: 2rem; color: var(--verde-oscuro); margin: 0 0 8px; }
+.container.wide { width: 94%; max-width: 1280px; }
+
+/* ---------- Mapa ---------- */
+#mapaLeaflet {
+  height: 560px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+  position: relative;
+  z-index: 1; /* contiene los z-index internos de Leaflet para que no tapen la navbar */
+}
+@media only screen and (max-width: 600px) {
+  #mapaLeaflet { height: 420px; }
+  .hero h1 { font-size: 2rem; }
+}
+
+.leyenda { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: #555; }
+.leyenda i { vertical-align: middle; }
+
+/* Pin personalizado (reemplaza el marcador azul por defecto de Leaflet) */
+.pin-solidario span {
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .4);
+}
+.pin-solidario span i { transform: rotate(45deg); color: #fff; font-size: 20px; }
+.pin-solidario b {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+  display: flex; align-items: center; justify-content: center;
+}
+.pin-solidario b i { color: var(--verde); font-size: 16px; }
+
+.popup-inst h6 { margin: 0 0 4px; font-weight: 500; }
+.popup-inst p { margin: 2px 0; }
+.popup-inst .btn-small { margin-top: 8px; background: var(--verde); }
+
+/* ---------- Cards ---------- */
+.institucion-card .card-image img {
+  height: 180px; object-fit: cover; background: #e0e0e0;
+}
+.institucion-card .insignia {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--verde); color: #fff; margin: 0;
+}
+.institucion-card .insignia i {
+  float: none; cursor: default; padding: 0 4px 0 0; vertical-align: middle; line-height: inherit;
+}
+.institucion-card .card-title { color: #212121; font-size: 20px; font-weight: 500; }
+.institucion-card p { margin: 4px 0; }
+.institucion-card .card-action a { color: var(--verde) !important; font-weight: 500; }
+
+.estrellas i { font-size: 18px; vertical-align: middle; color: #ffb300; }
+
+.estado-vacio { text-align: center; padding: 40px 0; color: #757575; }
+.estado-vacio i { font-size: 56px; display: block; margin-bottom: 8px; }
+
+/* ---------- Modal de detalle ---------- */
+.detalle-foto { width: 100%; max-height: 240px; object-fit: cover; border-radius: 6px; background: #e0e0e0; }
+.modal .modal-content h4 { color: var(--verde-oscuro); margin-top: 16px; }
+.modal .modal-content h5 { margin-top: 28px; color: var(--verde-oscuro); }
+.resena { border-left: 3px solid var(--verde); padding-left: 12px; margin: 14px 0; }
+.evidencia-mini { height: 80px; border-radius: 4px; margin-top: 6px; object-fit: cover; }
+
+/* ---------- Footer ---------- */
+.footer-simple {
+  background: var(--verde-oscuro); color: #fff;
+  padding: 20px 0; text-align: center; margin-top: 40px;
+}
+.footer-simple p { margin: 0; }
+
+/* ---------- Carrusel ---------- */
+.carrusel-wrap { position: relative; }
+#carruselDestacadas { height: 380px; }
+
+.carousel .carousel-item.destacada {
+  width: 260px; height: 340px;
+  background: #fff; border-radius: 8px; overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+  text-align: left;
+}
+.destacada img { width: 100%; height: 150px; object-fit: cover; background: #e0e0e0; }
+.destacada-cuerpo { padding: 12px 14px; color: #212121; }
+.destacada-cuerpo > strong { display: block; font-size: 17px; margin-bottom: 4px; }
+.destacada-cuerpo .btn-small { margin-top: 10px; }
+
+.carrusel-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; }
+.carrusel-btn.izq { left: 0; }
+.carrusel-btn.der { right: 0; }
+
+/* ---------- Cómo funciona ---------- */
+.etapa-card .card-title { font-weight: 500; color: var(--verde-oscuro); margin-top: 8px; }
+.collapsible-header i { color: var(--verde); }
+.collapsible-body ol { margin: 0; padding-left: 20px; }
+.collapsible-body ol li { list-style: decimal; margin-bottom: 4px; }
+
+/* ---------- Video ---------- */
+.video-wrap video {
+  width: 100%; max-height: 480px;
+  border-radius: 8px; background: #000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+.video-wrap [hidden] { display: none; }
+
+/* ---------- Formulario de contacto ---------- */
+.error-msg { display: block; color: #d32f2f; font-size: 12px; min-height: 16px; }
+.contador { display: block; text-align: right; font-size: 12px; color: #757575; }
+#formContacto input.valid:not([type]),
+#formContacto input.valid { border-bottom-color: var(--verde); box-shadow: 0 1px 0 0 var(--verde); }
+#contactoOk { margin-top: 24px; }
+#contactoOk[hidden] { display: none; }
+
+/* ---------- Parte 3 ---------- */
+[hidden] { display: none !important; }
+
+/* La navbar ahora tiene más enlaces: se compactan para que entren con la sidebar fija */
+nav ul a { padding: 0 12px; font-size: 15px; }
+
+#panel h2 .chip { vertical-align: middle; font-size: 14px; }
+.collection .collection-item .acciones { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.collection .collection-item p { margin: 6px 0; }
+
+.estrellas-input { display: flex; gap: 4px; margin: 4px 0 8px; }
+.estrella { background: none; border: 0; cursor: pointer; padding: 0; line-height: 1; }
+.estrella i { font-size: 36px; color: #ffb300; }
+.estrella:focus-visible { outline: 2px solid var(--verde); border-radius: 4px; }
+
+.pin-bloque {
+  display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+  background: var(--verde-claro); border-radius: 8px; padding: 12px; margin-top: 10px;
+}
+.pin-numero { font-size: 2.2rem; letter-spacing: 6px; font-weight: 700; color: var(--verde-oscuro); font-family: monospace; }
+
+.admin-item { display: flex; gap: 16px; }
+.admin-foto { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; background: #e0e0e0; flex-shrink: 0; }
+.admin-datos { flex: 1; min-width: 0; }
+@media only screen and (max-width: 600px) {
+  .admin-item { flex-direction: column; }
+  .admin-foto { width: 100%; height: 140px; }
+}
+
+#mapaRegistro { height: 280px; border-radius: 8px; margin: 8px 0; position: relative; z-index: 1; }
+.modal { max-height: 90%; }
+.modal h6 { color: var(--verde-oscuro); font-weight: 500; margin-top: 20px; }
