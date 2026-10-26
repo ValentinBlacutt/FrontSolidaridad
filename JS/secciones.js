@@ -19,24 +19,28 @@
       const r = await Api.instituciones({ tamanoPagina: 50 });
 
       // Mejor valoradas primero; las que todavía no tienen calificaciones van al final
-      const top = [...r.items]
-        .sort((a, b) =>
-          (b.reputacionPromedio ?? -1) - (a.reputacionPromedio ?? -1)
-          || b.cantidadCalificaciones - a.cantidadCalificaciones)
-        .slice(0, 6);
+      const top = r.items
+  .filter(i => i.cantidadCalificaciones > 0)
+  .sort((a, b) =>
+    b.reputacionPromedio - a.reputacionPromedio
+    || b.cantidadCalificaciones - a.cantidadCalificaciones)
+  .slice(0, 6);
 
-      if (!top.length) {
-        carrusel.innerHTML = '';
-        estado.textContent = 'Todavía no hay instituciones para destacar.';
-        return;
-      }
+if (!top.length) {
+  carrusel.innerHTML = '';
+  estado.textContent = 'Todavía no hay instituciones para destacar.';
+  return;
+}
 
-      carrusel.innerHTML = top.map(htmlItem).join('');
-      const instancia = M.Carousel.init(carrusel, {
-        dist: -50,
-        padding: 30,
-        numVisible: window.innerWidth < 600 ? 3 : 5
-      });
+let lista = [...top];
+while (lista.length < 4) lista = lista.concat(top);
+
+carrusel.innerHTML = lista.map(htmlItem).join('');
+const instancia = M.Carousel.init(carrusel, {
+  dist: -50,
+  padding: 30,
+  numVisible: 3
+});
 
       document.getElementById('carruselPrev').addEventListener('click', () => instancia.prev());
       document.getElementById('carruselNext').addEventListener('click', () => instancia.next());
@@ -110,8 +114,8 @@
     const reglas = {
       nombre: v => nombrePersona.test(v) || 'Ingresá tu nombre (solo letras, mínimo 2).',
       apellido: v => nombrePersona.test(v) || 'Ingresá tu apellido (solo letras, mínimo 2).',
-      telefono: v => (/^[0-9+()\-\s]{8,20}$/.test(v) && v.replace(/\D/g, '').length >= 8)
-        || 'Ingresá un teléfono válido, por ejemplo 11 5555-0123.',
+      telefono: v => /^(?=(?:\D*\d){10}\D*$)[0-9()\-\s]+$/.test(v)
+        || 'Ingresá un teléfono de 10 dígitos (2 de zona), por ejemplo 11 5555-0123.',
       email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)
         || 'Ingresá un email válido, por ejemplo nombre@correo.com.',
       comentarios: v => (v.length >= 10 && v.length <= 2000)

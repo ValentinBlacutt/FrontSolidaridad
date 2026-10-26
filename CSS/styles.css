@@ -191,3 +191,31 @@ nav ul a { padding: 0 12px; font-size: 15px; }
 #mapaRegistro { height: 280px; border-radius: 8px; margin: 8px 0; position: relative; z-index: 1; }
 .modal { max-height: 90%; }
 .modal h6 { color: var(--verde-oscuro); font-weight: 500; margin-top: 20px; }
+
+
+/* La navbar fija arranca después de la sidebar (300px): ajustamos su ancho */
+@media only screen and (min-width: 993px) {
+  .navbar-fixed nav {
+    left: 300px;
+    width: calc(100% - 300px);
+  }
+}
+
+/* Si aun así no entran los enlaces, se ocultan (ya están en la sidebar) */
+@media only screen and (min-width: 993px) and (max-width: 1250px) {
+  nav ul.right { display: none; }
+}
+
+@media only screen and (min-width: 993px) {
+  nav .brand-logo {
+    margin-left: 32px;
+  }
+}
+
+#formContacto .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+#formContacto .row .col {
+  float: none;
+}
