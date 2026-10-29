@@ -219,3 +219,40 @@ nav ul a { padding: 0 12px; font-size: 15px; }
 #formContacto .row .col {
   float: none;
 }
+
+#formContacto .row,
+#formRegistro .row,
+#formRegInstitucion .row,
+#formNecesidad .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+#formContacto .row .col,
+#formRegistro .row .col,
+#formRegInstitucion .row .col,
+#formNecesidad .row .col {
+  float: none;
+}
+
+#lista {
+  display: flex;
+  flex-wrap: wrap;
+}
+#lista > .col {
+  float: none;
+}
+#lista > .col { display: flex; }
+#lista .institucion-card { width: 100%; }
+
+#como-funciona .row:first-of-type {
+  display: flex;
+  flex-wrap: wrap;
+}
+#como-funciona .row:first-of-type > .col {
+  float: none;
+  display: flex;
+}
+#como-funciona .etapa-card {
+  width: 100%;
+  margin: 0.5rem 0 1rem;
+}
