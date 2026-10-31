@@ -94,9 +94,11 @@ const Api = {
   postForm: (ruta, form) => Api._pedir('POST', ruta, { form }),
 
   // Las fotos del seeder son URLs absolutas; las subidas son rutas relativas (/uploads/...)
-  urlArchivo(url) {
-    return /^https?:\/\//i.test(url) ? url : API_URL + url;
-  },
+urlArchivo(url) {
+  if (/^https?:\/\//i.test(url)) return url;       // URL completa: se usa tal cual
+  if (url.startsWith('/IMG/')) return url;         // foto del front: misma carpeta que la página
+  return API_URL + url;                            // subidas de usuarios: están en la API
+},
 
   // ----- Público -----
   instituciones: (filtros) => Api.get('/api/instituciones', filtros),
