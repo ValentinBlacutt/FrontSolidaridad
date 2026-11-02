@@ -256,3 +256,12 @@ nav ul a { padding: 0 12px; font-size: 15px; }
   width: 100%;
   margin: 0.5rem 0 1rem;
 }
+#formContacto .correo-label {
+    white-space: nowrap;
+    font-size: 0.85rem;
+    width: calc(100% - 3rem);
+}
+
+#formContacto input#email {
+    margin-bottom: 0;
+}
