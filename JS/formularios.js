@@ -1,4 +1,4 @@
-/* Utilidades de formularios: validación en vivo, CUIT, archivos, selects y envío con estado "ocupado". */
+﻿/* Utilidades de formularios: validación en vivo, CUIT, archivos, selects y envío con estado "ocupado". */
 const Formulario = {
   nombrePersona: /^\p{L}[\p{L}\s'’-]{1,99}$/u,
   email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
@@ -24,6 +24,7 @@ const Formulario = {
       const mensaje = resultado === true ? '' : resultado;
 
       campo.classList.toggle('invalid', Boolean(mensaje));
+      if (mensaje) campo.classList.remove('valid'); // evita que Materialize deje verde un campo invalido
       campo.classList.toggle('valid', !mensaje && Boolean(valor));
       campo.setAttribute('aria-invalid', mensaje ? 'true' : 'false');
       const error = document.getElementById('error-' + id);

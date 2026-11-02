@@ -1,4 +1,4 @@
-/* Institución: registro (con mapa y archivos), estado de la solicitud, donaciones recibidas con PIN/QR y necesidades. */
+﻿/* Institución: registro (con mapa y archivos), estado de la solicitud, donaciones recibidas con PIN/QR y necesidades. */
 const PanelInstitucion = (() => {
   const $ = (id) => document.getElementById(id);
   const DOCUMENTOS = ['.pdf', '.jpg', '.jpeg', '.png'];
@@ -15,7 +15,7 @@ const PanelInstitucion = (() => {
     vReg = Formulario.vincular({
       'inst-email': v => Formulario.email.test(v) || 'Ingresá un email válido.',
       'inst-password': v => (v.length >= 8 && v.length <= 100) || 'La contraseña debe tener entre 8 y 100 caracteres.',
-      'inst-nombre': v => (v.length >= 3 && v.length <= 150) || 'Ingresá el nombre (3 a 150 caracteres).',
+      'inst-nombre': v => ((v.length >= 3 && v.length <= 150) && !/^\d+$/.test(v)) || 'El nombre debe tener entre 3 y 150 caracteres y no puede ser solo números.',
       'inst-tipo': v => v !== '' || 'Elegí el tipo de institución.',
       'inst-descripcion': v => (v.length >= 20 && v.length <= 1000) || 'La descripción debe tener entre 20 y 1000 caracteres.',
       'inst-cuit': v => Formulario.cuitValido(v) || 'El CUIT no es válido (11 dígitos). Ej.: 30-71234567-1.',
@@ -42,6 +42,7 @@ const PanelInstitucion = (() => {
     $('btnMiUbicacion').addEventListener('click', usarMiUbicacion);
     document.addEventListener('click', alHacerClic);
     document.addEventListener('sesion-cambio', actualizar);
+    iniciarFormatoCuit();
     actualizar();
   });
 
@@ -49,6 +50,17 @@ const PanelInstitucion = (() => {
     const esInstitucion = Sesion.usuario?.rol === 'Institucion';
     $('panelInstitucion').hidden = !esInstitucion;
     if (esInstitucion) cargar();
+  }
+
+  function iniciarFormatoCuit() {
+    const campo = document.getElementById('inst-cuit');
+    if (!campo) return;
+    campo.addEventListener('input', () => {
+      let v = campo.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 10) v = v.slice(0,2) + '-' + v.slice(2,10) + '-' + v.slice(10);
+      else if (v.length > 2) v = v.slice(0,2) + '-' + v.slice(2);
+      campo.value = v;
+    });
   }
 
   // ================================================== REGISTRO DE INSTITUCIÓN
